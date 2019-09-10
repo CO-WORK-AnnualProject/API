@@ -2,6 +2,7 @@
   "name": "API",
   "version": "1.0.0",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "latest"
   },
   "devDependencies": {

@@ -1,89 +1,130 @@
 const Mongo = require('mongodb');
 const MongoClient = Mongo.MongoClient;
 const MongoObjectId = Mongo.ObjectID;
+const databaseInfo = Object.freeze({"url":"mongodb://localhost:27017/", "name":"co-work"});
+const serverInfo = Object.freeze({"host":"localhost", "port":8081});
+const collectionName = "users";
 
-const express = require('express');
-const app = express();
+const Express = require('express');
+const app = Express();
+
+const BodyParser = require('body-parser');
+
 const fs = require("fs");
-const user = {
-   "user4" : {
-      "name" : "mohit",
-      "password" : "password4",
-      "profession" : "teacher",
-      "id": 4
-   }
-};
 
-var url = "mongodb://localhost:27017/myDB";
+app.use(BodyParser.json()); // support json encoded bodies
+app.use(BodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.get('/listUsers', function (req, res) {
-   MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("co-work");
-      var query = {};
-      dbo.collection("users").find(query).toArray(function(err, result) {
-         if (err) throw err;
+app.get('/', function (req, res) {
+   res.send('Server is open!')
+});
+
+app.get('/listUsers', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionName);
+      const query = {};
+
+      collection.find(query).toArray((err, result) => {
+         if (err || result.length <= 0) res.end(null);
          console.log(result);
-         res.end( JSON.stringify(result));
-         db.close();
+         res.end(JSON.stringify(result));
+         client.close();
       });
-   });
+   }).catch((err) => {
+      console.error(err)
+   })
 });
 
-// app.get('/listUsers', function (req, res) {
-//    fs.readFile(__dirname + "/" + "users.json", 'utf8', function (err, data) {
-//       console.log(data);
-//       res.end(data);
-//    });
-// });
+app.get('/listUsers/:id', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionName);
+      const query = { _id : new MongoObjectId(req.params.id) };
 
-app.get('/listUsers/:id', function (req, res) {
-   MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db("co-work");
-      var query = { _id : new MongoObjectId(req.params.id) };
-      console.log(query);
-      dbo.collection("users").find(query).toArray(function(err, result) {
-         if (err) throw err;
+      collection.find(query).toArray((err, result) => {
+         if (err || result.length <= 0) res.end(null);
          console.log(result);
-         res.end( JSON.stringify(result));
-         db.close();
+         res.end(JSON.stringify(result));
+         client.close();
       });
-   });
+   }).catch((err) => {
+      console.error(err)
+   })
 });
 
-// app.get('/listUsers/:id', function (req, res) {
-//    // First read existing users.
-//    fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
-//       const users = JSON.parse( data );
-//       const user = users["user" + req.params.id];
-//       console.log(user);
-//       res.end( JSON.stringify(user));
-//    });
-// });
+app.post('/addUser', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionName);
+      const query =  req.body;
 
-app.post('/addUser', function (req, res) {
-   // First read existing users.
-   fs.readFile(__dirname + "/" + "users.json", 'utf8', function (err, data) {
-      data = JSON.parse(data);
-      data["user4"] = user["user4"];
-      console.log(data);
-      res.end(JSON.stringify(data));
-   });
+      collection.insertOne(query).then((result) => {
+         console.log(result);
+         res.end("User added!");
+         client.close();
+      }).catch((err) => {
+         console.error(err)
+      })
+   }).catch((err) => {
+      console.error(err)
+   })
 });
 
-app.delete('/deleteUser/:id', function (req, res) {
-   // First read existing users.
-   fs.readFile( __dirname + "/" + "users.json", 'utf8', function (err, data) {
-      const users = JSON.parse(data);
-      delete users["user" + req.params.id];
-      console.log(users["user" + req.params.id]);
-      res.end(JSON.stringify(data));
-   });
+app.post('/updateUser/:id', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionName);
+      const query = { _id : new MongoObjectId(req.params.id) };
+      const newValues = { $set: Object.freeze(req.body)};
+
+      collection.updateOne(query, newValues).then((result) => {
+         console.log(result);
+         res.end("User updated!");
+         client.close();
+      }).catch((err) => {
+         console.error(err)
+      })
+   }).catch((err) => {
+      console.error(err)
+   })
 });
 
-const server = app.listen(8081, '127.0.0.1', function () {
+app.delete('/deleteUser/:id', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionName);
+      const query = { _id : new MongoObjectId(req.params.id) };
+
+      collection.deleteOne(query).then((result) => {
+         console.log(result);
+         res.end("User deleted!");
+         client.close();
+      }).catch((err) => {
+         console.error(err)
+      })
+   }).catch((err) => {
+      console.error(err)
+   })
+});
+
+const server = app.listen(serverInfo.port, serverInfo.host, () => {
    const host = server.address().address;
    const port = server.address().port;
-   console.log("Example app listening at http://%s:%s", host, port)
+   console.log("Server started! At http://%s:%s", host, port)
 });
