@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "dependencies": {
     "express": "latest"
+  },
+  "devDependencies": {
+    "mongodb": "^3.3.2"
   }
 }
