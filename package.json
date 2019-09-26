@@ -6,6 +6,7 @@
     "express": "latest"
   },
   "devDependencies": {
+    "cors": "^2.8.5",
     "mongodb": "^3.3.2"
   }
 }

@@ -5,6 +5,8 @@ const databaseInfo = Object.freeze({"url":"mongodb://localhost:27017/", "name":"
 const serverInfo = Object.freeze({"host":"localhost", "port":8081});
 const collectionName = "users";
 
+const cors = require('cors');
+
 const Express = require('express');
 const app = Express();
 
@@ -14,6 +16,7 @@ const fs = require("fs");
 
 app.use(BodyParser.json()); // support json encoded bodies
 app.use(BodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(cors({origin: 'http://localhost:4200'}));
 
 app.get('/', function (req, res) {
    res.send('Server is open!')
@@ -123,8 +126,41 @@ app.delete('/deleteUser/:id', (req, res) => {
    })
 });
 
+app.post('/login', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionName);
+      const query = req.body;
+
+      collection.find(query).toArray((err, result) => {
+         console.log(result);
+         //if (err || result.length <= 0) result = null;
+         res.end(JSON.stringify(result));
+         client.close();
+      }).catch((err) => {
+         console.error(err)
+      })
+   }).catch((err) => {
+      console.error(err)
+   })
+});
+
 const server = app.listen(serverInfo.port, serverInfo.host, () => {
    const host = server.address().address;
    const port = server.address().port;
    console.log("Server started! At http://%s:%s", host, port)
 });
+
+function update(mongoObjectId, newValues) {
+
+   collection.updateOne(mongoObjectId, newValues).then((result) => {
+      console.log(result);
+      res.end("User updated!");
+      client.close();
+   }).catch((err) => {
+      console.error(err)
+   })
+}
