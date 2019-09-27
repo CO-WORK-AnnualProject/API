@@ -4,7 +4,7 @@ const Mongo = require('mongodb');
 const MongoClient = Mongo.MongoClient;
 const MongoObjectId = Mongo.ObjectID;
 const databaseInfo = Object.freeze({"url":"mongodb+srv://loghan:Voitures97130@dvilcluster-ehelb.gcp.mongodb.net/test?retryWrites=true&w=majority", "name":"co-work"}); // "mongodb://dvilcluster-ehelb.gcp.mongodb.net:27017/"
-const serverInfo = Object.freeze({"host":"localhost", "port":8081});
+const serverInfo = Object.freeze({"host":"co-work-lrams.herokuapp.com", "port":8081}); // localhost
 const collectionName = "users";
 
 const cors = require('cors');
@@ -18,7 +18,7 @@ const fs = require("fs");
 
 app.use(BodyParser.json()); // support json encoded bodies
 app.use(BodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(cors({origin: 'http://localhost:4200'}));
+app.use(cors({origin: 'http://localhost:4200'})); // 109.31.193.30
 
 app.get('/', function (req, res) {
    res.send('Server is open!')
