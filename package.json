@@ -3,9 +3,13 @@
   "version": "2.0.0",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "latest"
+    "express": "latest",
+    "cors": "^2.8.5",
+    "mongodb": "^3.3.2"
   },
   "devDependencies": {
+    "body-parser": "^1.19.0",
+    "express": "latest",
     "cors": "^2.8.5",
     "mongodb": "^3.3.2"
   },
