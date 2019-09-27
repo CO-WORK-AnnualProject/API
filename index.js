@@ -4,7 +4,7 @@ const MongoClient = Mongo.MongoClient;
 const MongoObjectId = Mongo.ObjectID;
 const databaseInfo = Object.freeze({"url":"mongodb+srv://loghan:Voitures97130@dvilcluster-ehelb.gcp.mongodb.net/test?retryWrites=true&w=majority", "name":"co-work"}); // "mongodb://dvilcluster-ehelb.gcp.mongodb.net:27017/"
 const serverInfo = Object.freeze({"host":"localhost", "port":process.env.PORT || 5000}); // "co-work-lrams.herokuapp.com"
-const collectionName = "users";
+const collectionsName = Object.freeze({"user":"users", "ticket":"tickets"});
 const Cors = require('cors');
 const BodyParser = require('body-parser');
 const Path = require('path');
@@ -23,13 +23,15 @@ app.get('/', function (req, res) {
    res.send('Server is open!')
 });
 
+//** USER **//
+
 app.get('/listUsers', (req, res) => {
    MongoClient.connect(databaseInfo.url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
    }).then((client) => {
       const dbo = client.db(databaseInfo.name);
-      const collection = dbo.collection(collectionName);
+      const collection = dbo.collection(collectionsName.user);
       const query = {};
 
       collection.find(query).toArray((err, result) => {
@@ -49,7 +51,7 @@ app.get('/listUsers/:id', (req, res) => {
       useUnifiedTopology: true
    }).then((client) => {
       const dbo = client.db(databaseInfo.name);
-      const collection = dbo.collection(collectionName);
+      const collection = dbo.collection(collectionsName.user);
       const query = { _id : new MongoObjectId(req.params.id) };
 
       collection.find(query).toArray((err, result) => {
@@ -69,7 +71,7 @@ app.post('/addUser', (req, res) => {
       useUnifiedTopology: true
    }).then((client) => {
       const dbo = client.db(databaseInfo.name);
-      const collection = dbo.collection(collectionName);
+      const collection = dbo.collection(collectionsName.user);
       const query =  req.body;
 
       collection.insertOne(query).then((result) => {
@@ -90,7 +92,7 @@ app.post('/updateUser/:id', (req, res) => {
       useUnifiedTopology: true
    }).then((client) => {
       const dbo = client.db(databaseInfo.name);
-      const collection = dbo.collection(collectionName);
+      const collection = dbo.collection(collectionsName.user);
       const query = { _id : new MongoObjectId(req.params.id) };
       const newValues = { $set: Object.freeze(req.body)};
 
@@ -112,7 +114,7 @@ app.delete('/deleteUser/:id', (req, res) => {
       useUnifiedTopology: true
    }).then((client) => {
       const dbo = client.db(databaseInfo.name);
-      const collection = dbo.collection(collectionName);
+      const collection = dbo.collection(collectionsName.user);
       const query = { _id : new MongoObjectId(req.params.id) };
 
       collection.deleteOne(query).then((result) => {
@@ -133,7 +135,7 @@ app.post('/login', (req, res) => {
       useUnifiedTopology: true
    }).then((client) => {
       const dbo = client.db(databaseInfo.name);
-      const collection = dbo.collection(collectionName);
+      const collection = dbo.collection(collectionsName.user);
       const query = req.body;
 
       collection.find(query).toArray((err, result) => {
@@ -149,21 +151,54 @@ app.post('/login', (req, res) => {
    })
 });
 
+//** TICKET **//
+
+app.get('/listTickets', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionsName.ticket);
+      const query = {};
+
+      collection.find(query).toArray((err, result) => {
+         if (err || result.length <= 0) res.end(null);
+         console.log(result);
+         res.end(JSON.stringify(result));
+         client.close();
+      });
+   }).catch((err) => {
+      console.error(err)
+   })
+});
+
+app.post('/addTicket', (req, res) => {
+   MongoClient.connect(databaseInfo.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+   }).then((client) => {
+      const dbo = client.db(databaseInfo.name);
+      const collection = dbo.collection(collectionsName.ticket);
+      const query =  req.body;
+
+      collection.insertOne(query).then((result) => {
+         console.log(result);
+         res.end("Ticket added!");
+         client.close();
+      }).catch((err) => {
+         console.error(err)
+      })
+   }).catch((err) => {
+      console.error(err)
+   })
+});
+
+//** SERVER LISTEN **//
+
 const server = app.listen(serverInfo.port, /*serverInfo.host,*/ () => {
    //const host = server.address().address;
    const port = server.address().port;
    //console.log("Server started! At http://%s:%s", host, port)
    console.log(`Listening on ${port}`);
 });
-
-/*
-function update(mongoObjectId, newValues) {
-
-   collection.updateOne(mongoObjectId, newValues).then((result) => {
-      console.log(result);
-      res.end("User updated!");
-      client.close();
-   }).catch((err) => {
-      console.error(err)
-   })
-}*/
