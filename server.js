@@ -1,7 +1,9 @@
+
+
 const Mongo = require('mongodb');
 const MongoClient = Mongo.MongoClient;
 const MongoObjectId = Mongo.ObjectID;
-const databaseInfo = Object.freeze({"url":"mongodb://localhost:27017/", "name":"co-work"});
+const databaseInfo = Object.freeze({"url":"mongodb+srv://loghan:Voitures97130@dvilcluster-ehelb.gcp.mongodb.net/test?retryWrites=true&w=majority", "name":"co-work"}); // "mongodb://dvilcluster-ehelb.gcp.mongodb.net:27017/"
 const serverInfo = Object.freeze({"host":"localhost", "port":8081});
 const collectionName = "users";
 
@@ -154,6 +156,7 @@ const server = app.listen(serverInfo.port, serverInfo.host, () => {
    console.log("Server started! At http://%s:%s", host, port)
 });
 
+/*
 function update(mongoObjectId, newValues) {
 
    collection.updateOne(mongoObjectId, newValues).then((result) => {
@@ -163,4 +166,4 @@ function update(mongoObjectId, newValues) {
    }).catch((err) => {
       console.error(err)
    })
-}
+}*/
