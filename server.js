@@ -1,25 +1,24 @@
 
-
 const Mongo = require('mongodb');
 const MongoClient = Mongo.MongoClient;
 const MongoObjectId = Mongo.ObjectID;
 const databaseInfo = Object.freeze({"url":"mongodb+srv://loghan:Voitures97130@dvilcluster-ehelb.gcp.mongodb.net/test?retryWrites=true&w=majority", "name":"co-work"}); // "mongodb://dvilcluster-ehelb.gcp.mongodb.net:27017/"
-const serverInfo = Object.freeze({"host":"co-work-lrams.herokuapp.com", "port":8081}); // localhost
+const serverInfo = Object.freeze({"host":"localhost", "port":process.env.PORT || 5000}); // "co-work-lrams.herokuapp.com"
 const collectionName = "users";
-
 const cors = require('cors');
-
+const BodyParser = require('body-parser');
+const path = require('path');
 const Express = require('express');
 const app = Express();
-
-const BodyParser = require('body-parser');
-
-const fs = require("fs");
 
 app.use(BodyParser.json()); // support json encoded bodies
 app.use(BodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(cors({origin: 'http://localhost:4200'})); // 109.31.193.30
+app.use(Express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
+//app.get('/', (req, res) => res.render('pages/index'))
 app.get('/', function (req, res) {
    res.send('Server is open!')
 });
@@ -150,10 +149,11 @@ app.post('/login', (req, res) => {
    })
 });
 
-const server = app.listen(serverInfo.port, serverInfo.host, () => {
-   const host = server.address().address;
+const server = app.listen(serverInfo.port, /*serverInfo.host,*/ () => {
+   //const host = server.address().address;
    const port = server.address().port;
-   console.log("Server started! At http://%s:%s", host, port)
+   //console.log("Server started! At http://%s:%s", host, port)
+   console.log(`Listening on ${port}`);
 });
 
 /*
