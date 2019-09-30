@@ -13,7 +13,9 @@ const app = Express();
 
 app.use(BodyParser.json()); // support json encoded bodies
 app.use(BodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(Cors({origin: 'http://localhost:4200'})); // 109.31.193.30
+//app.use(Cors({origin: 'http://localhost:4200'}));
+//app.use(Cors({origin: 'http://109.31.193.30'}));
+app.use(Cors({origin: 'http://ideal-lnt.fr'}));
 app.use(Express.static(Path.join(__dirname, 'public')));
 app.set('views', Path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
