@@ -140,11 +140,11 @@ app.post('/login', (req, res) => {
 
       collection.find(query).toArray((err, result) => {
          console.log(result);
-         //if (err || result.length <= 0) result = null;
-         res.end(JSON.stringify(result));
+         if (result.length <= 0)
+            res.end(null);
+         else
+            res.end(JSON.stringify(result));
          client.close();
-      }).catch((err) => {
-         console.error(err)
       })
    }).catch((err) => {
       console.error(err)
@@ -186,8 +186,6 @@ app.post('/addTicket', (req, res) => {
          console.log(result);
          res.end("Ticket added!");
          client.close();
-      }).catch((err) => {
-         console.error(err)
       })
    }).catch((err) => {
       console.error(err)
