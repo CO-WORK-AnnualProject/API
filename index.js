@@ -1,3 +1,6 @@
+const Booking = require('./lib/booking');
+const OpenSpace = require('./lib/open_space');
+const Subscription = require('./lib/subscription');
 const Ticket = require('./lib/ticket');
 const User = require('./lib/user');
 
@@ -39,6 +42,30 @@ app.get('/listTickets/:id', Ticket.getOne);
 app.post('/addTicket', Ticket.addOne);
 app.post('/updateTicket/:id', Ticket.updateOne);
 app.delete('/deleteTicket/:id', Ticket.deleteOne);
+
+//** BOOKING PATH **//
+
+app.get('/listBookings', Booking.getAll);
+app.get('/listBookings/:id', Booking.getOne);
+app.post('/addBooking', Booking.addOne);
+app.post('/updateBooking/:id', Booking.updateOne);
+app.delete('/deleteBooking/:id', Booking.deleteOne);
+
+//** OPEN SPACE PATH **//
+
+app.get('/listOpenSpaces', OpenSpace.getAll);
+app.get('/listOpenSpaces/:id', OpenSpace.getOne);
+app.post('/addOpenSpace', OpenSpace.addOne);
+app.post('/updateOpenSpace/:id', OpenSpace.updateOne);
+app.delete('/deleteOpenSpace/:id', OpenSpace.deleteOne);
+
+//** SUBSCRIPTION PATH **//
+
+app.get('/listSubscriptions', Subscription.getAll);
+app.get('/listSubscriptions/:id', Subscription.getOne);
+app.post('/addSubscription', Subscription.addOne);
+app.post('/updateSubscription/:id', Subscription.updateOne);
+app.delete('/deleteSubscription/:id', Subscription.deleteOne);
 
 //** SERVER LISTEN **//
 
