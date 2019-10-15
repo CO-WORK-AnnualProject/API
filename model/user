@@ -1,0 +1,12 @@
+
+profilRoot = Object.freeze({
+    "_id": "",
+    "connectDetail": { "email" : "", "password" : ""},
+    "lastName": "",
+    "firstName": "",
+    "socityName": "",
+    "subscription": "",
+    "isEngaged": "",
+    "isStudent": "",
+    "engagementDate":""
+});
