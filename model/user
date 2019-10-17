@@ -8,5 +8,6 @@ profilRoot = Object.freeze({
     "subscription": "",
     "isEngaged": "",
     "isStudent": "",
-    "engagementDate":""
+    "engagementDate":"",
+    "idOpenSpace":""
 });
